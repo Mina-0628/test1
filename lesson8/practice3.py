@@ -45,8 +45,12 @@ def playgame():
             high = guess - 1  #新的輸入值已經猜的數字-1為新的high
             print(f"再小一點！範圍縮小為 {low} ~ {high}\n")
 
+
 while True:
-    playgame()
-    isplay=input("您還要繼續嗎?(y.n)")
+    result = playgame()
+    print(result)
+    # 用來控制要不要繼續
+    isplay = input("您還要繼續嗎?(y/n)")
     if isplay == "n":
+        print("遊戲結束！")
         break
