@@ -135,6 +135,8 @@ class GuessingGame:
             self.placeholder_active = False
 
     def _on_focus_out(self, _):
+        if self.entry["state"] == tk.DISABLED:
+            return
         if not self.entry.get():
             self._show_placeholder()
 
@@ -183,9 +185,10 @@ class GuessingGame:
         self.range_var.set(f"目前範圍：{self.low} ~ {self.high}")
         self.attempts_var.set(f"猜測次數：{self.attempts}")
         self._set_hint("", TEXT_WHITE)
-        self.entry.config(state=tk.NORMAL)
+        self.entry.config(state=tk.NORMAL, fg=TEXT_WHITE)
         self.entry.delete(0, tk.END)
-        self._show_placeholder()
+        self.placeholder_active = False
+        self.entry.focus_set()
         self.guess_btn.config(state=tk.NORMAL)
 
 
