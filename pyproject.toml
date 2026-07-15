@@ -8,4 +8,5 @@ dependencies = [
     "jupyter>=1.1.1",
     "jupyterlab>=4.6.0",
     "lab>=8.10",
+    "playwright>=1.61.0",
 ]
