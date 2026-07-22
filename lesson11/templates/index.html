@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>維基百科搜尋工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "PingFang TC", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .radio-label input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .btn-search {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-search:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-search:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-search:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .result-summary {
+            color: #555;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .error-message {
+            background: #fff3f3;
+            color: #d32f2f;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #d32f2f;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 搜尋表單卡片 -->
+        <div class="card">
+            <h1>維基百科搜尋工具</h1>
+            <p class="subtitle">Playwright 自動化搜尋 - Web GUI 版本</p>
+
+            <form id="searchForm">
+                <!-- 搜尋關鍵字 -->
+                <div class="form-group">
+                    <label for="query">搜尋關鍵字</label>
+                    <input type="text" id="query" name="query" value="臺灣" placeholder="請輸入搜尋關鍵字" required>
+                </div>
+
+                <!-- 定位方式 -->
+                <div class="form-group">
+                    <label>元素定位方式</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="method" value="id" checked>
+                            ID 選擇器 (#searchInput)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="method" value="placeholder">
+                            Placeholder 提示文字
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 進階選項 -->
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="headless" name="headless" checked>
+                        隱藏瀏覽器視窗 (Headless 模式)
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="timeout">頁面載入逾時 (毫秒)</label>
+                    <input type="number" id="timeout" name="timeout" value="30000" min="5000" max="120000" step="1000">
+                </div>
+
+                <!-- 送出按鈕 -->
+                <button type="submit" class="btn-search" id="btnSearch">
+                    開始搜尋
+                </button>
+            </form>
+        </div>
+
+        <!-- 載入動畫 -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p class="loading-text">正在搜尋維基百科，請稍候...</p>
+        </div>
+
+        <!-- 搜尋結果 -->
+        <div class="result-card" id="resultCard">
+            <h2 class="result-title" id="resultTitle"></h2>
+            <p class="result-summary" id="resultSummary"></p>
+        </div>
+
+        <!-- 錯誤訊息 -->
+        <div class="error-message" id="errorMessage">
+            <strong>搜尋失敗：</strong>
+            <span id="errorText"></span>
+        </div>
+
+        <p class="footer">Powered by Playwright + Python</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('searchForm');
+        const btnSearch = document.getElementById('btnSearch');
+        const loading = document.getElementById('loading');
+        const resultCard = document.getElementById('resultCard');
+        const errorMessage = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // 取得表單資料
+            const query = document.getElementById('query').value.trim();
+            const method = document.querySelector('input[name="method"]:checked').value;
+            const headless = document.getElementById('headless').checked;
+            const timeout = document.getElementById('timeout').value;
+
+            if (!query) {
+                alert('請輸入搜尋關鍵字');
+                return;
+            }
+
+            // 顯示載入狀態
+            btnSearch.disabled = true;
+            btnSearch.textContent = '搜尋中...';
+            loading.classList.add('show');
+            resultCard.classList.remove('show');
+            errorMessage.classList.remove('show');
+
+            try {
+                // 發送 POST 請求到後端
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `query=${encodeURIComponent(query)}&method=${method}&headless=${headless}&timeout=${timeout}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // 顯示搜尋結果
+                    document.getElementById('resultTitle').textContent = data.heading;
+                    document.getElementById('resultSummary').textContent = data.summary;
+                    resultCard.classList.add('show');
+                } else {
+                    // 顯示錯誤訊息
+                    document.getElementById('errorText').textContent = data.error;
+                    errorMessage.classList.add('show');
+                }
+            } catch (err) {
+                document.getElementById('errorText').textContent = '無法連線到伺服器：' + err.message;
+                errorMessage.classList.add('show');
+            } finally {
+                // 恢復按鈕狀態
+                btnSearch.disabled = false;
+                btnSearch.textContent = '開始搜尋';
+                loading.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

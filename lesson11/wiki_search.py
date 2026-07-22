@@ -43,7 +43,7 @@ def search_wiki(
             page.locator("#searchInput").fill(query)
         else:
             # 使用 placeholder 提示文字定位（較直觀）
-            page.get_by_placeholder("搜尋維基百科").first.fill(query)
+            page.get_by_placeholder("搜索维基百科").first.fill(query)
 
         # 截圖保存（使用時間戳避免覆蓋）
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
