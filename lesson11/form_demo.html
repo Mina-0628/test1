@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- 設定字元編碼為 UTF-8，支援中文顯示 -->
+    <meta charset="UTF-8">
+    <!-- 響應式設計：讓頁面在不同裝置上自動調整寬度 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表單測試頁面</title>
+    <style>
+        /* 全域樣式：設定字型、最大寬度、置中、內距與背景色 */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        /* 表單容器：白底、圓角、陰影效果 */
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        /* 標題樣式：深灰色、置中對齊 */
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        /* 表單欄位群組：下方間距 20px */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        /* 標籤樣式：區塊顯示、粗體、灰色 */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        /* 文字輸入框、電子郵件輸入框、下拉選單共用樣式 */
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;  /* 讓 padding 不會撑大元素 */
+            font-size: 14px;
+        }
+        /* 核取方塊右側間距 */
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        /* 送出按鈕樣式：全寬、綠色背景、白色文字 */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;  /* 滑鼠懸停時平滑過渡 */
+        }
+        /* 按鈕懸停效果：加深綠色 */
+        button:hover {
+            background-color: #45a049;
+        }
+        /* 成功訊息區塊：預設隱藏，提交成功後才顯示 */
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- 表單標題 -->
+        <h1>使用者註冊表單</h1>
+        <!-- 註冊表單：包含姓名、電子郵件、國家、訂閱選項 -->
+        <form id="registrationForm">
+            <!-- 姓名輸入欄位（必填） -->
+            <div class="form-group">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <!-- 電子郵件輸入欄位（必填，自動驗證格式） -->
+            <div class="form-group">
+                <label for="email">電子郵件：</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <!-- 國家下拉選單（必填，預設顯示提示文字） -->
+            <div class="form-group">
+                <label for="country">國家：</label>
+                <select id="country" name="country" required>
+                    <option value="">請選擇國家</option>
+                    <option value="Taiwan">台灣</option>
+                    <option value="China">中國</option>
+                    <option value="Japan">日本</option>
+                    <option value="Korea">韓國</option>
+                    <option value="USA">美國</option>
+                </select>
+            </div>
+            
+            <!-- 訂閱電子報核取方塊（非必填） -->
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="subscribe" name="subscribe">
+                    訂閱電子報
+                </label>
+            </div>
+            
+            <!-- 送出按鈕 -->
+            <button type="submit" id="submit">提交</button>
+        </form>
+        
+        <!-- 提交成功後顯示的訊息區塊（預設隱藏） -->
+        <div class="success-message" id="successMessage">
+            <h2>提交成功！</h2>
+            <p>感謝您的註冊</p>
+        </div>
+    </div>
+
+    <script>
+        // 監聽表單的 submit 事件
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            // 阻止瀏覽器預設的表單送出行為（避免頁面重新整理）
+            e.preventDefault();
+            
+            // 隱藏表單，顯示成功訊息
+            document.getElementById('registrationForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // 模擬頁面載入完成後更新標題（用於自動化測試驗證）
+            setTimeout(() => {
+                document.title = '提交成功';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
