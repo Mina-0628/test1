@@ -39,7 +39,8 @@ def run_search(query: str, method: str, headless: bool, timeout: int) -> dict:
             page.screenshot(path=screenshot_path)
 
             page.keyboard.press("Enter")
-            page.wait_for_load_state("networkidle", timeout=timeout)
+            page.wait_for_load_state("domcontentloaded", timeout=timeout)
+            page.locator("#firstHeading").wait_for(timeout=timeout)
 
             results["heading"] = page.locator("#firstHeading").inner_text()
             content = page.locator("#mw-content-text p").first.inner_text()

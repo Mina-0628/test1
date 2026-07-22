@@ -52,8 +52,9 @@ def search_wiki(
         # 按下 Enter 送出搜尋
         page.keyboard.press("Enter")
 
-        # 等待頁面載入完畢
-        page.wait_for_load_state("networkidle", timeout=timeout)
+        # 等待頁面載入完畢（使用 domcontentloaded 避免 networkidle 超時）
+        page.wait_for_load_state("domcontentloaded", timeout=timeout)
+        page.locator("#firstHeading").wait_for(timeout=timeout)
 
         # 抓取文章標題與摘要
         first_heading: str = page.locator("#firstHeading").inner_text()
@@ -64,7 +65,7 @@ def search_wiki(
 
         # 返回上一頁並等待載入
         page.go_back()
-        page.wait_for_load_state("networkidle", timeout=timeout)
+        page.wait_for_load_state("domcontentloaded", timeout=timeout)
         print(f"返回首頁: {page.title()}")
 
     except Exception as e:
